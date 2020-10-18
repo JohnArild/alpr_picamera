@@ -33,27 +33,43 @@
 import picamera
 import time
 import subprocess
-
-"""
-TODO:
-    alpr -j for json
-    regex to get best result
-"""
+import json
+import re
 
 camera = picamera.PiCamera()
 camera.resolution = (1024, 768)
 camera.start_preview()
 time.sleep(2)
+
+def read_json(text):
+    ret = []
+    try:
+        alpr_json = json.loads(text)
+        for result in alpr_json["results"]:
+            candidates = result["candidates"]
+            for plates in candidates:
+                regex = re.search("\w{2}\d{5}", plates["plate"])
+                if regex:
+                    ret.append(regex.group())
+        return ret
+    except:
+        return
+
+def print_numbers(text):
+    result = read_json(text)
+    if result:
+        for plate in result:
+            print(plate)
+
 while True:
-    imagepath="test1.jpg"
+    imagepath="test.jpg"
     camera.capture(imagepath)
-    proc=subprocess.Popen(["alpr", imagepath, "-c eu "], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    proc=subprocess.Popen(["alpr", imagepath, "-c eu", "-j"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     readchar = "must initialize as not empty"
     readline = ""
     while readchar:
         readchar = proc.stdout.read(1).decode()
         readline += readchar
         if readchar == "\r" or readchar == "\n" or readchar == "":
-            print(readline)
+            print_numbers(readline)
             readline = ""
-    
