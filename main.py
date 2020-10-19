@@ -70,13 +70,13 @@ def pic_update(temp1):
 
 while True:
     imagepath="test.jpg"
+    pic_update(temp1)
+    temp1 = not temp1
     camera.capture(imagepath)
     proc=subprocess.Popen(["alpr", imagepath, "-c eu", "-j"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     readchar = "must initialize as not empty"
     readline = ""
     while readchar:
-        pic_update(temp1)
-        temp1 = not temp1
         readchar = proc.stdout.read(1).decode()
         readline += readchar
         if readchar == "\r" or readchar == "\n" or readchar == "":
