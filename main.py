@@ -36,6 +36,7 @@ import subprocess
 import json
 import re
 
+temp1 = True
 camera = picamera.PiCamera()
 camera.resolution = (1024, 768)
 camera.start_preview()
@@ -61,6 +62,12 @@ def print_numbers(text):
         for plate in result:
             print(plate)
 
+def pic_update(temp1):
+    if temp1:
+        print("\r\\", end="")
+    else:
+        print("\r/", end="")
+
 while True:
     imagepath="test.jpg"
     camera.capture(imagepath)
@@ -68,6 +75,8 @@ while True:
     readchar = "must initialize as not empty"
     readline = ""
     while readchar:
+        pic_update(temp1)
+        temp1 = not temp1
         readchar = proc.stdout.read(1).decode()
         readline += readchar
         if readchar == "\r" or readchar == "\n" or readchar == "":
