@@ -48,7 +48,7 @@ def read_json(text):
         for result in alpr_json["results"]:
             candidates = result["candidates"]
             for plates in candidates:
-                regex = re.search("\w{2}\d{5}", plates["plate"])
+                regex = re.search("\D{2}\d{5}", plates["plate"])
                 if regex:
                     ret.append(regex.group())
         return ret
