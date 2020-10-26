@@ -35,6 +35,9 @@ import time
 import subprocess
 import json
 import re
+import datetime
+
+FILENAME = "plates.txt"
 
 temp1 = True
 camera = picamera.PiCamera()
@@ -60,13 +63,22 @@ def print_numbers(text):
     result = read_json(text)
     if result:
         for plate in result:
+            print("\r" + str(datetime.datetime.now()), end=" - ")
             print(plate)
+            if FILENAME:
+                save(plate)
 
 def pic_update(temp1):
     if temp1:
         print("\r\\", end="")
     else:
         print("\r/", end="")
+
+def save(plate):
+    plate_string = str(datetime.datetime.now()) + " , " + plate + "\n"
+    with open(FILENAME, 'a') as file1: 
+        file1.write(plate_string) 
+    pass
 
 while True:
     imagepath="test.jpg"
